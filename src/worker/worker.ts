@@ -26,12 +26,13 @@ process.on('SIGTERM', () => shutdown('SIGTERM'));
 async function processMessage(m: Message): Promise<void> {
   const start = Date.now();
   const receiveCount = Number(m.Attributes?.ApproximateReceiveCount ?? 0);
+  let orderId: string | undefined;
   try {
-    const { orderId } = Body.parse(JSON.parse(m.Body ?? ''));
+    orderId = Body.parse(JSON.parse(m.Body ?? '')).orderId;
     const result = await handleOrder(orderId);
     log.info({ orderId, messageId: m.MessageId, receiveCount, durationMs: Date.now() - start, outcome: result });
   } catch (err) {
-    log.warn({ messageId: m.MessageId, receiveCount, durationMs: Date.now() - start, outcome: 'failure', err: (err as Error).message });
+    log.warn({ orderId, messageId: m.MessageId, receiveCount, durationMs: Date.now() - start, outcome: 'failure', err: (err as Error).message });
     throw err; // remonte l'échec : le message ne sera pas supprimé
   }
 }

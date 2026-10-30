@@ -19,6 +19,12 @@ export async function handleOrder(orderId: string): Promise<HandleResult> {
       return 'duplicate'; // déjà traité : succès, le message sera supprimé
     }
 
+    // const { rows } = await client.query<{ customer_id: string }>(
+    //   `SELECT customer_id FROM orders WHERE id = $1`,
+    //   [orderId],
+    // );
+    // if (rows[0]?.customer_id === 'FAIL') throw new Error('forced failure (customerId=FAIL)');
+
     await sleep(1000);
     if (Math.random() < 0.3) throw new Error('random failure');
 

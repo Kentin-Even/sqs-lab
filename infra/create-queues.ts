@@ -3,7 +3,12 @@ import { config } from '../src/config.js';
 import { sqs } from '../src/sqs.js';
 
 // 1. DLQ d'abord
-const dlq = await sqs.send(new CreateQueueCommand({ QueueName: config.queues.dlq }));
+const dlq = await sqs.send(
+  new CreateQueueCommand({
+    QueueName: config.queues.dlq,
+    Attributes: { MessageRetentionPeriod: '1209600' },
+  }),
+);
 const dlqUrl = dlq.QueueUrl!;
 
 // 2. Son ARN
